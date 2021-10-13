@@ -5,6 +5,9 @@ Thumbs.db
 # VS Code
 .vscode/
 
+# IDEA
+.idea/
+
 # Vagrant
 .vagrant
 
