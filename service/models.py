@@ -18,7 +18,7 @@ class DataValidationError(Exception):
     pass
 
 
-class YourResourceModel(db.Model):
+class Recommendations(db.Model):
     """
     Class that represents a <your resource model name>
     """
@@ -26,8 +26,11 @@ class YourResourceModel(db.Model):
     app = None
 
     # Table Schema
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(63))
+
+    # id = db.Column(db.Integer, primary_key=True)
+    product_origin = db.Column(db.Integer, primary_key=True)
+    product_target = db.Column(db.Integer, primary_key=True)
+    relation = db.Column(db.Integer, primary_key=True)  # 1 for cross-sell, 2 for up-sell, 3 for accessory
 
     def __repr__(self):
         return "<YourResourceModel %r id=[%s]>" % (self.name, self.id)
@@ -36,8 +39,8 @@ class YourResourceModel(db.Model):
         """
         Creates a YourResourceModel to the database
         """
-        logger.info("Creating %s", self.name)
-        self.id = None  # id must be none to generate next primary key
+        # logger.info("Creating %s", self.name)
+        # self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
@@ -86,6 +89,9 @@ class YourResourceModel(db.Model):
         db.init_app(app)
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
+
+        cls.create(Recommendations(product_A=1, product_B=2, relation=1))
+        cls.create(Recommendations(product_A=1, product_B=2, relation=1))
 
     @classmethod
     def all(cls):
