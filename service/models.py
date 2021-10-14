@@ -90,8 +90,14 @@ class Recommendations(db.Model):
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
-        cls.create(Recommendations(product_A=1, product_B=2, relation=1))
-        cls.create(Recommendations(product_A=1, product_B=2, relation=1))
+        cls.create(Recommendations(product_origin=1, product_target=2, relation=1))
+        cls.create(Recommendations(product_origin=2, product_target=1, relation=1))
+        cls.create(Recommendations(product_origin=1, product_target=3, relation=2))
+        cls.create(Recommendations(product_origin=2, product_target=3, relation=3))
+
+        # cls.create(Recommendations(product_origin=2, product_target=1, relation=2))
+        # cls.create(Recommendations(product_origin=3, product_target=1, relation=2))
+        # cls.create(Recommendations(product_origin=1, product_target=2, relation=2))
 
     @classmethod
     def all(cls):
