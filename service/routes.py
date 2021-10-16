@@ -79,21 +79,21 @@ def create_recommendations():
 # DELETE ALL RECOMMENDATIONS CONTAIN A SPECIFIC PRODUCT
 ######################################################################
 @app.route("/recommendations/<int:product_id>", methods=["DELETE"])
-def delete_recommendations():
+def delete_recommendations(product_id):
     """
     Delete all recommendations contians a specific product
     This endpoint will delete all recommendations based on a specific product id
     """
     app.logger.info("Request to  Delete all recommendations contians a specific product")
     #check_content_type("application/json")
-    recommendation = Recommendations()
+    #recommendation = Recommendations()
     #recommendation.deserialize(request.get_json())
     recommendationList = Recommendations.find_by_attributes_for_delete(product_id)
-    '''if len(recommendationList) != 0:
-        recommendation = recommendationList[0]
-        if recommendation.is_deleted == 0:
-            recommendation.is_deleted = 1
-            recommendation.save() '''
+    if len(recommendationList) != 0:
+        for recommendation in recommendationList:
+            if recommendation.is_deleted == 0:
+                recommendation.is_deleted = 1
+                recommendation.save()
 
     return make_response('', status.HTTP_204_NO_CONTENT)
 ######################################################################

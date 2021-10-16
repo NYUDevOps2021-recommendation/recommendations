@@ -130,13 +130,9 @@ class Recommendations(db.Model):
         """ Finds all YourResourceModels by product_id """
         logger.info("Processing lookup for all rows contian %s ...", product_id)
         result = cls.query
-
         result1 = result.filter(cls.product_origin == product_id)
-
         result2 = result.filter(cls.product_target == product_id)
-        result1 = result1 + result2
-
-        return result1.all()
+        return result1.all()+result2.all()
 
     @classmethod
     def find_or_404(cls, by_id):
