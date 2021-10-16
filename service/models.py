@@ -102,19 +102,19 @@ class Recommendations(db.Model):
 
     @classmethod
     def all(cls):
-        """ Returns all of the YourResourceModels in the database """
-        logger.info("Processing all YourResourceModels")
+        """ Returns all of the Recommendations in the database """
+        logger.info("Processing all Recommendations")
         return cls.query.all()
 
     @classmethod
     def find_by_id(cls, by_id):
-        """ Finds a YourResourceModel by it's ID """
+        """ Finds a Recommendation by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
 
     @classmethod
     def find_by_attributes(cls, origin, target, relation):
-        """ Finds a YourResourceModel by it's ID """
+        """ Finds a Recommendation by it's ID """
         logger.info("Processing lookup for origin %s target %s relation %s ...", origin, target, relation)
         result = cls.query
         if origin:
@@ -124,6 +124,19 @@ class Recommendations(db.Model):
         if relation:
             result = result.filter(cls.relation == relation)
         return result.all()
+    
+    @classmethod
+    def find_by_attributes_for_delete(cls, product_id):
+        """ Finds all YourResourceModels by product_id """
+        logger.info("Processing lookup for all rows contian %s ...", product_id)
+        result = cls.query
+
+        result1 = result.filter(cls.product_origin == product_id)
+
+        result2 = result.filter(cls.product_target == product_id)
+        result1 = result1 + result2
+
+        return result1.all()
 
     @classmethod
     def find_or_404(cls, by_id):
