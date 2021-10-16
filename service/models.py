@@ -27,20 +27,21 @@ class Recommendations(db.Model):
 
     # Table Schema
 
-    # id = db.Column(db.Integer, primary_key=True)
-    product_origin = db.Column(db.Integer, primary_key=True)
-    product_target = db.Column(db.Integer, primary_key=True)
-    relation = db.Column(db.Integer, primary_key=True)  # 1 for cross-sell, 2 for up-sell, 3 for accessory
+    id = db.Column(db.Integer, primary_key=True)
+    product_origin = db.Column(db.Integer)
+    product_target = db.Column(db.Integer)
+    relation = db.Column(db.Integer)  # 1 for cross-sell, 2 for up-sell, 3 for accessory
+    is_deleted = db.Column(db.Integer)  # 0 is not deleted, 1 is deleted
 
     def __repr__(self):
-        return "<YourResourceModel %r id=[%s]>" % (self.name, self.id)
+        return "<Recommendations %s %s %s id=[%s]>" % (self.product_origin, self.product_target, self.relation, self.id)
 
     def create(self):
         """
         Creates a YourResourceModel to the database
         """
         # logger.info("Creating %s", self.name)
-        # self.id = None  # id must be none to generate next primary key
+        self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
 
@@ -48,7 +49,7 @@ class Recommendations(db.Model):
         """
         Updates a YourResourceModel to the database
         """
-        logger.info("Saving %s", self.name)
+        logger.info("Saving %s %s %s", self.product_origin, self.product_target, self.relation)
         db.session.commit()
 
     def delete(self):
@@ -59,7 +60,8 @@ class Recommendations(db.Model):
 
     def serialize(self):
         """ Serializes a YourResourceModel into a dictionary """
-        return {"id": self.id, "name": self.name}
+        return {"id": self.id, "product_origin": self.product_origin, "product_target": self.product_target,
+                "relation": self.relation, "is_deleted": self.is_deleted}
 
     def deserialize(self, data):
         """
@@ -69,7 +71,10 @@ class Recommendations(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.name = data["name"]
+            self.product_origin = data["product_origin"]
+            self.product_target = data["product_target"]
+            self.relation = data["relation"]
+            self.is_deleted = 0
         except KeyError as error:
             raise DataValidationError(
                 "Invalid YourResourceModel: missing " + error.args[0]
@@ -90,14 +95,10 @@ class Recommendations(db.Model):
         app.app_context().push()
         db.create_all()  # make our sqlalchemy tables
 
-        cls.create(Recommendations(product_origin=1, product_target=2, relation=1))
-        cls.create(Recommendations(product_origin=2, product_target=1, relation=1))
-        cls.create(Recommendations(product_origin=1, product_target=3, relation=2))
-        cls.create(Recommendations(product_origin=2, product_target=3, relation=3))
-
-        # cls.create(Recommendations(product_origin=2, product_target=1, relation=2))
-        # cls.create(Recommendations(product_origin=3, product_target=1, relation=2))
-        # cls.create(Recommendations(product_origin=1, product_target=2, relation=2))
+        # cls.create(Recommendations(product_origin=1, product_target=2, relation=1))
+        # cls.create(Recommendations(product_origin=2, product_target=1, relation=1))
+        # cls.create(Recommendations(product_origin=1, product_target=3, relation=2))
+        # cls.create(Recommendations(product_origin=2, product_target=3, relation=3))
 
     @classmethod
     def all(cls):
@@ -106,10 +107,23 @@ class Recommendations(db.Model):
         return cls.query.all()
 
     @classmethod
-    def find(cls, by_id):
+    def find_by_id(cls, by_id):
         """ Finds a YourResourceModel by it's ID """
         logger.info("Processing lookup for id %s ...", by_id)
         return cls.query.get(by_id)
+
+    @classmethod
+    def find_by_attributes(cls, origin, target, relation):
+        """ Finds a YourResourceModel by it's ID """
+        logger.info("Processing lookup for origin %s target %s relation %s ...", origin, target, relation)
+        result = cls.query
+        if origin:
+            result = result.filter(cls.product_origin == origin)
+        if target:
+            result = result.filter(cls.product_target == target)
+        if relation:
+            result = result.filter(cls.relation == relation)
+        return result.all()
 
     @classmethod
     def find_or_404(cls, by_id):
