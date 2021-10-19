@@ -47,6 +47,28 @@ def get_recommendations(id):
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 ######################################################################
+# RETRIEVE RECOMMENDATIONS
+######################################################################
+
+
+@app.route("/recommendations/<int:product_origin>/<int:relation>", methods=["GET"])
+def read_recommendations(product_origin,relation):
+    """
+    Retrieve a single Recommendation
+    This endpoint will return a Recommendation based on product_origin and relation
+    """
+    app.logger.info("Request for recommendation with product_origin: %s and relation", product_origin, relation)
+    recommendationList = Recommendations.find_by_attributes_for_read(product_origin, relation)
+
+    # if len(recommendationList) == 0:
+    #     return make_response( {}, status.HTTP_200_OK)
+
+    # if not recommendation:
+    #     raise NotFound("Recommendation with product_origin '{}' was not found.".format(product_origin))
+    # return make_response(jsonify(recommendationList), status.HTTP_200_OK)
+    return make_response(jsonify({"Related products are": recommendationList}), status.HTTP_200_OK)
+
+######################################################################
 # ADD A NEW RECOMMENDATION
 ######################################################################
 @app.route("/recommendations", methods=["POST"])

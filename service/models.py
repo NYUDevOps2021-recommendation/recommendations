@@ -124,11 +124,25 @@ class Recommendations(db.Model):
         if relation:
             result = result.filter(cls.relation == relation)
         return result.all()
+
+    @classmethod
+    def find_by_attributes_for_read(cls, origin=0, relation=0):
+        """ Find products by it's origin and relation """
+        logger.info("Processing lookup for origin %s relation %s ...", origin, relation)
+        result = cls.query.with_entities(cls.product_target).\
+            filter(cls.product_origin == origin).\
+                filter(cls.relation == relation).\
+                filter(cls.is_deleted == 0)
+        # if origin:
+        #     result = result.filter(cls.product_origin == origin)
+        # if relation:
+        #     result = result.filter(cls.relation == relation)
+        return result.all()
     
     @classmethod
     def find_by_attributes_for_delete(cls, product_id):
         """ Finds all YourResourceModels by product_id """
-        logger.info("Processing lookup for all rows contian %s ...", product_id)
+        logger.info("Processing lookup for all rows contain %s ...", product_id)
         result = cls.query
         result1 = result.filter(cls.product_origin == product_id)
         result2 = result.filter(cls.product_target == product_id)
