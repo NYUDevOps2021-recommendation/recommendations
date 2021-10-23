@@ -151,20 +151,36 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['is_deleted'], 0)
 
     def test_retrieve_a_reconmmendation(self):
-        """ Retrieve a Recommendation """
+        """ Read a Recommendation """
+        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'relation': 1} 
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data = data_json, content_type='application/json')
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location is not None)
+        resp = self.app.get('/recommendations/1')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(resp is not None)
+
+
+
+    def test_retrieve_a_reconmmendation_on_product_originrelation(self):
+        """Read a Recommendation based on product_origin and relation"""
         recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'relation': 1} 
         data_json = json.dumps(recommendation_rawdata)
         resp = self.app.post("/recommendations", data = data_json, content_type='application/json')
         location = resp.headers.get('Location', None)
         self.assertTrue(location is not None)
 
-        resp = self.app.get('/recommendations')
-        self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
-        self.assertTrue(resp is not None)
-
-        resp = self.app.get('/recommendations/1')
+        resp = self.app.get('/recommendations/')
+        resp_data = json.loads(resp.data)
+        # self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertTrue(resp is not None)
+        self.assertEqual(resp_data[0]['product_origin'], 2)
+        self.assertEqual(resp_data[0]['product_target'], 3)
+        self.assertEqual(resp_data[0]['relation'], 1)
+        self.assertEqual(resp_data[0]['is_deleted'], 0)
+
 
     def test_not_find_a_reconmmendation(self):
         """ Not found a Recommendation """
