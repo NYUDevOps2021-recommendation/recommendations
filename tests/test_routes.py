@@ -94,6 +94,24 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['relation'], 1)
         self.assertEqual(resp_data['is_deleted'], 0)
 
+    def test_add_a_recommendation(self):
+        """ Create a recommendation and add it to the database """
+        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'relation': 1} 
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data = data_json, content_type='application/json')
+
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location is not None)
+
+        resp_data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(resp_data['product_origin'], 2)
+        self.assertEqual(resp_data['product_target'], 3)
+        self.assertEqual(resp_data['relation'], 1)
+        self.assertEqual(resp_data['is_deleted'], 0)
+
+    def test_add_a_had_deleted_recommendation(self):
+        """ Create a same recommendation and add it to the database """
         # post the same data  Missing 68-71 
         recommendation_rawdata = {'product_origin': 3, 'product_target': 4, 'relation': 1}
         data_json = json.dumps(recommendation_rawdata)
@@ -101,6 +119,18 @@ class TestYourResourceServer(TestCase):
 
         resp_data = json.loads(resp.data)
         self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(resp_data['product_origin'], 3)
+        self.assertEqual(resp_data['product_target'], 4)
+        self.assertEqual(resp_data['relation'], 1)
+        self.assertEqual(resp_data['is_deleted'], 0)
+               
+        # resp_delete = self.app.delete('/recommendations/1')
+        # self.assertEqual(resp_delete.status_code, status.HTTP_204_NO_CONTENT)
+        # self.assertEqual(len(resp_delete.data), 0)
+
+        resp = self.app.get('/recommendations/1')
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertTrue(resp is not None)
         self.assertEqual(resp_data['product_origin'], 3)
         self.assertEqual(resp_data['product_target'], 4)
         self.assertEqual(resp_data['relation'], 1)
@@ -120,6 +150,13 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['relation'], 1)
         self.assertEqual(resp_data['is_deleted'], 0)
 
+    def test_retrieve_a_reconmmendation(self):
+        """ Retrieve a Recommendation """
+        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'relation': 1} 
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data = data_json, content_type='application/json')
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location is not None)
 
         resp = self.app.get('/recommendations')
         self.assertEqual(resp.status_code, status.HTTP_405_METHOD_NOT_ALLOWED)
@@ -129,6 +166,8 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertTrue(resp is not None)
 
+    def test_not_find_a_reconmmendation(self):
+        """ Not found a Recommendation """
         # not found
         resp = self.app.get('/recommendations/99')
         resp_data = json.loads(resp.data)
@@ -138,7 +177,6 @@ class TestYourResourceServer(TestCase):
         data_json = json.dumps(recommendation_rawdata)
         resp = self.app.post("/recommendations", data = data_json, content_type='application/txt')
         self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
-
 
 
 
