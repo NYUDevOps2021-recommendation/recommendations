@@ -124,9 +124,9 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['relation'], 1)
         self.assertEqual(resp_data['is_deleted'], 0)
                
-        # resp_delete = self.app.delete('/recommendations/1')
-        # self.assertEqual(resp_delete.status_code, status.HTTP_204_NO_CONTENT)
-        # self.assertEqual(len(resp_delete.data), 0)
+        resp_delete = self.app.delete('/recommendations/1')
+        self.assertEqual(resp_delete.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp_delete.data), 0)
 
         resp = self.app.get('/recommendations/1')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
@@ -177,6 +177,20 @@ class TestYourResourceServer(TestCase):
         data_json = json.dumps(recommendation_rawdata)
         resp = self.app.post("/recommendations", data = data_json, content_type='application/txt')
         self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        
 
+    def test_delete_a_recommendation(self):
+        """ Delete a Recommendation """
+        # delete a recommendation
+        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'relation': 1} 
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data = data_json, content_type='application/json')
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location is not None)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+
+        resp = self.app.delete('/recommendations/1')
+        self.assertEqual(resp.status_code, status.HTTP_204_NO_CONTENT)
+        self.assertEqual(len(resp.data), 0)     
 
 
