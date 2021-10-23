@@ -120,6 +120,15 @@ class Recommendations(db.Model):
         if relation:
             result = result.filter(cls.relation == relation)
         return result.all()
+    
+    @classmethod
+    def find_by_attributes_for_delete(cls, product_id):
+        """ Finds all YourResourceModels by product_id """
+        logger.info("Processing lookup for all rows contian %s ...", product_id)
+        result = cls.query
+        result1 = result.filter(cls.product_origin == product_id)
+        result2 = result.filter(cls.product_target == product_id)
+        return result1.all()+result2.all()
 
     @classmethod
     def find_or_404(cls, by_id):
