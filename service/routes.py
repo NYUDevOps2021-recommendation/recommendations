@@ -7,7 +7,7 @@ Describe what your service does here
 import os
 import sys
 import logging
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import Flask, jsonify, request, url_for, make_response, abort, request
 from . import status  # HTTP Status Codes
 from werkzeug.exceptions import NotFound
 
@@ -31,6 +31,29 @@ def index():
         status.HTTP_200_OK,
     )
 
+######################################################################
+# Read a Recommendation based on product_origin and relation
+######################################################################
+@app.route("/recommendations/", methods=["GET"])
+def read_recommendations():
+    """
+    Retrieve a single Recommendation
+    This endpoint will return a Recommendation based on product_origin and relation
+    """
+    origin = request.args.get('product-id')
+    relation = request.args.get('relation') 
+    app.logger.info("Request for recommendation")
+    recommendationList = Recommendations.find_by_attributes(origin,0,relation)
+    temp = []
+    if len(recommendationList) != 0:
+        for recommendation in recommendationList:
+            if recommendation.is_deleted == 0:
+                recommendation.save()
+                temp.append(recommendation.serialize())
+                
+    if len(recommendationList) == 0:
+        return make_response( {}, status.HTTP_200_OK)
+    return make_response(jsonify(temp), status.HTTP_200_OK)
 
 ######################################################################
 # RETRIEVE A RECOMMENDATION
