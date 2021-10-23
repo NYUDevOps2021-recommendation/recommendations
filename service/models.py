@@ -5,6 +5,7 @@ All of the models are stored in this module
 """
 import logging
 from flask_sqlalchemy import SQLAlchemy
+from flask import request
 
 logger = logging.getLogger("flask.app")
 
@@ -125,19 +126,19 @@ class Recommendations(db.Model):
             result = result.filter(cls.relation == relation)
         return result.all()
 
-    @classmethod
-    def find_by_attributes_for_read(cls, origin=0, relation=0):
-        """ Find products by it's origin and relation """
-        logger.info("Processing lookup for origin %s relation %s ...", origin, relation)
-        result = cls.query.with_entities(cls.product_target).\
-            filter(cls.product_origin == origin).\
-                filter(cls.relation == relation).\
-                filter(cls.is_deleted == 0)
-        # if origin:
-        #     result = result.filter(cls.product_origin == origin)
-        # if relation:
-        #     result = result.filter(cls.relation == relation)
-        return result.all()
+    # @classmethod
+    # def find_by_attributes_for_read(cls):
+    #     """ Find products by it's origin and relation """
+    #     origin = request.args.get('product-id')
+    #     relation = request.args.get('relation') 
+    #     logger.info("Processing lookup for origin %s relation %s ...", origin, relation)
+    #     result = cls.query
+    #     if origin:
+    #         result = result.filter(cls.product_origin == origin)
+    #     if relation:
+    #         result = result.filter(cls.relation == relation)
+    #     result = result.filter(cls.is_deleted == 0)
+    #     return result.all()
     
     @classmethod
     def find_by_attributes_for_delete(cls, product_id):

@@ -7,7 +7,7 @@ Describe what your service does here
 import os
 import sys
 import logging
-from flask import Flask, jsonify, request, url_for, make_response, abort
+from flask import Flask, jsonify, request, url_for, make_response, abort, request
 from . import status  # HTTP Status Codes
 
 # For this example we'll use SQLAlchemy, a popular ORM that supports a
@@ -51,22 +51,27 @@ def get_recommendations(id):
 ######################################################################
 
 
-@app.route("/recommendations/<int:product_origin>/<int:relation>", methods=["GET"])
-def read_recommendations(product_origin,relation):
+@app.route("/recommendations/", methods=["GET"])
+def read_recommendations():
     """
     Retrieve a single Recommendation
     This endpoint will return a Recommendation based on product_origin and relation
     """
-    app.logger.info("Request for recommendation with product_origin: %s and relation", product_origin, relation)
-    recommendationList = Recommendations.find_by_attributes_for_read(product_origin, relation)
+    origin = request.args.get('product-id')
+    relation = request.args.get('relation') 
+    app.logger.info("Request for recommendation")
+    recommendationList = Recommendations.find_by_attributes(origin,0,relation)
+    temp = []
+    if len(recommendationList) != 0:
+        for recommendation in recommendationList:
+            if recommendation.is_deleted == 0:
+                recommendation.save()
+                temp.append(recommendation.serialize())
+                
 
-    # if len(recommendationList) == 0:
-    #     return make_response( {}, status.HTTP_200_OK)
-
-    # if not recommendation:
-    #     raise NotFound("Recommendation with product_origin '{}' was not found.".format(product_origin))
-    # return make_response(jsonify(recommendationList), status.HTTP_200_OK)
-    return make_response(jsonify({"Related products are": recommendationList}), status.HTTP_200_OK)
+    if len(recommendationList) == 0:
+        return make_response( {}, status.HTTP_200_OK)
+    return make_response(jsonify(temp), status.HTTP_200_OK)
 
 ######################################################################
 # ADD A NEW RECOMMENDATION
