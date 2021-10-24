@@ -117,6 +117,40 @@ def delete_recommendations(recommendation_id):
             recommendation.save()
 
     return make_response('', status.HTTP_204_NO_CONTENT)
+
+
+######################################################################
+# UPDATE A  RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:id>", methods=["PUT"])
+def update_recommendations(id):
+    """
+    Updates a recommendation
+    This endpoint will update a recommendation with the specific product id
+    """
+    app.logger.info("Request to update a recommendation")
+    check_content_type("application/json")
+    recommendation = Recommendations().find_by_id(id)
+    if recommendation:
+        payload = request.get_json()
+        if "product_origin" in payload:
+            recommendation.product_origin = payload["product_origin"]
+        if "product_target" in payload:
+            recommendation.product_target = payload["product_target"]
+        if "relation" in payload:
+            recommendation.relation = payload["relation"]
+        if "is_deleted" in payload:
+            recommendation.is_deleted = payload["is_deleted"]        
+        recommendation.save()
+        message = recommendation.serialize()
+        response_code = status.HTTP_202_ACCEPTED
+    else:
+        message = 'Product with productId: {} - Not found'.format(id)
+        response_code = status.HTTP_404_NOT_FOUND
+        
+    return make_response(jsonify(message), response_code)        
+  
+  
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################

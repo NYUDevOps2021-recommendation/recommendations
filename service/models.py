@@ -45,6 +45,15 @@ class Recommendations(db.Model):
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
+    
+    # def update(self):
+    #     """
+    #     Update a Recommendation to the database
+    #     """
+    #     # logger.info("Creating %s", self.name)
+    #     self.id = None  # id must be none to generate next primary key
+    #     db.session.add(self)
+    #     db.session.commit()
 
     def save(self):
         """
