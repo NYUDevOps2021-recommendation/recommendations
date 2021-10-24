@@ -100,7 +100,7 @@ def create_recommendations():
     )
 
 ######################################################################
-# DELETE ALL RECOMMENDATIONS CONTAIN A SPECIFIC PRODUCT
+# DELETE A RECOMMENDATION MATCH A SPECIFIC PRODUCT
 ######################################################################
 @app.route("/recommendations/<int:recommendation_id>", methods=["DELETE"])
 def delete_recommendations(recommendation_id):
@@ -108,7 +108,7 @@ def delete_recommendations(recommendation_id):
     Delete a specific recommendation
     This endpoint will delete a recommendation based on a specific recommendation id
     """
-    app.logger.info("Request to  Delete all recommendations contians a specific product")
+    app.logger.info("Request to  Delete a recommendation based on a specific recommendation id")
 
     recommendation = Recommendations.find_by_id(recommendation_id)
     if (recommendation):
@@ -117,8 +117,6 @@ def delete_recommendations(recommendation_id):
             recommendation.save()
 
     return make_response('', status.HTTP_204_NO_CONTENT)
-
-
 ######################################################################
 # UPDATE A  RECOMMENDATION
 ######################################################################
