@@ -46,14 +46,21 @@ class Recommendations(db.Model):
         db.session.add(self)
         db.session.commit()
     
-    # def update(self):
-    #     """
-    #     Update a Recommendation to the database
-    #     """
-    #     # logger.info("Creating %s", self.name)
-    #     self.id = None  # id must be none to generate next primary key
-    #     db.session.add(self)
-    #     db.session.commit()
+    def update(self, payload):
+        """
+        Update a Recommendation to the database
+        """
+        # logger.info("Creating %s", self.name)
+        if "product_origin" in payload:
+            self.product_origin = payload["product_origin"]
+        if "product_target" in payload:
+            self.product_target = payload["product_target"]
+        if "relation" in payload:
+            self.relation = payload["relation"]
+        if "is_deleted" in payload:
+            self.is_deleted = payload["is_deleted"] 
+        db.session.add(self)
+        db.session.commit()
 
     def save(self):
         """

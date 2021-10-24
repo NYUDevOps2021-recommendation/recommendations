@@ -133,15 +133,7 @@ def update_recommendations(id):
     recommendation = Recommendations().find_by_id(id)
     if recommendation:
         payload = request.get_json()
-        if "product_origin" in payload:
-            recommendation.product_origin = payload["product_origin"]
-        if "product_target" in payload:
-            recommendation.product_target = payload["product_target"]
-        if "relation" in payload:
-            recommendation.relation = payload["relation"]
-        if "is_deleted" in payload:
-            recommendation.is_deleted = payload["is_deleted"]        
-        recommendation.save()
+        recommendation.update(payload)
         message = recommendation.serialize()
         response_code = status.HTTP_202_ACCEPTED
     else:
