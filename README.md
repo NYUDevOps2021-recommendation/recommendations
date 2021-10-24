@@ -9,6 +9,12 @@ usually buy item B". Recommendations should have a recommendation type like cros
 
 ## Prerequisite Installation using Vagrant
 
+Clone the project to your development folder and create your Vagrant VM
+
+    $ git clone https://github.com/NYUDevOps2021-recommendation/recommendations.git
+    $ cd recommendations
+    $ vagrant up
+    
 Once the VM is up you can use it with:
 
     $ vagrant ssh
