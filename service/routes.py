@@ -134,7 +134,7 @@ def update_recommendations(id):
         recommendation.update(payload)
         message = recommendation.serialize()
         
-        response_code = status.HTTP_201_CREATED
+        response_code = status.HTTP_200_OK
     else:
         message = 'Product with productId: {} - Not found'.format(id)
         response_code = status.HTTP_404_NOT_FOUND
