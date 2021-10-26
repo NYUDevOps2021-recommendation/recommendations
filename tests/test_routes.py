@@ -222,7 +222,7 @@ class TestYourResourceServer(TestCase):
         new_date =  {'product_origin': 3, 'product_target': 4, 'relation': 1} 
         data_json = json.dumps(new_date)
         resp = self.app.put('/recommendations/1', data = data_json, content_type='application/json')
-        self.assertEqual(resp.status_code, status.HTTP_202_ACCEPTED)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
 
         resp_data = json.loads(resp.data)
         self.assertEqual(resp_data['product_origin'], 3)
