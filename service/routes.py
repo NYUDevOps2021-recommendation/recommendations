@@ -31,6 +31,7 @@ def index():
         status.HTTP_200_OK,
     )
 
+
 ######################################################################
 # Read a Recommendation based on product_origin and relation
 ######################################################################
@@ -41,19 +42,20 @@ def read_recommendations():
     This endpoint will return a Recommendation based on product_origin and relation
     """
     origin = request.args.get('product-id')
-    relation = request.args.get('relation') 
+    relation = request.args.get('relation')
     app.logger.info("Request for recommendation")
-    recommendationList = Recommendations.find_by_attributes(origin,0,relation)
+    recommendationList = Recommendations.find_by_attributes(origin, 0, relation)
     temp = []
     if len(recommendationList) != 0:
         for recommendation in recommendationList:
             if recommendation.is_deleted == 0:
                 recommendation.save()
                 temp.append(recommendation.serialize())
-                
+
     if len(recommendationList) == 0:
-        return make_response( {}, status.HTTP_200_OK)
+        return make_response({}, status.HTTP_200_OK)
     return make_response(jsonify(temp), status.HTTP_200_OK)
+
 
 ######################################################################
 # RETRIEVE A RECOMMENDATION
@@ -70,6 +72,7 @@ def get_recommendations(id):
         raise NotFound("Recommendation with id '{}' was not found.".format(id))
     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
+
 ######################################################################
 # ADD A NEW RECOMMENDATION
 ######################################################################
@@ -83,6 +86,7 @@ def create_recommendations():
     check_content_type("application/json")
     recommendation = Recommendations()
     recommendation.deserialize(request.get_json())
+
     recommendationList = Recommendations.find_by_attributes(recommendation.product_origin,
                                                             recommendation.product_target,
                                                             recommendation.relation)
@@ -98,6 +102,7 @@ def create_recommendations():
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {'Location': location_url}
     )
+
 
 ######################################################################
 # DELETE A RECOMMENDATION MATCH A SPECIFIC PRODUCT
@@ -117,6 +122,8 @@ def delete_recommendations(recommendation_id):
             recommendation.save()
 
     return make_response('', status.HTTP_204_NO_CONTENT)
+
+
 ######################################################################
 # UPDATE A  RECOMMENDATION
 ######################################################################
@@ -138,10 +145,10 @@ def update_recommendations(id):
     else:
         message = 'Product with productId: {} - Not found'.format(id)
         response_code = status.HTTP_404_NOT_FOUND
-        
-    return make_response(jsonify(message), response_code)        
-  
-  
+
+    return make_response(jsonify(message), response_code)
+
+
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
