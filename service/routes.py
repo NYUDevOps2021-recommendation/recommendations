@@ -35,7 +35,7 @@ def index():
 ######################################################################
 # Read a Recommendation based on product_origin and relation
 ######################################################################
-@app.route("/recommendations/", methods=["GET"])
+@app.route("/recommendations", methods=["GET"])
 def read_recommendations():
     """
     Retrieve a single Recommendation

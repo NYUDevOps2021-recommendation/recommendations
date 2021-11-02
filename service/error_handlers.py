@@ -51,19 +51,19 @@ def not_found(error):
     )
 
 
-# @app.errorhandler(status.HTTP_405_METHOD_NOT_ALLOWED)
-# def method_not_supported(error):
-#     """Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED"""
-#     message = str(error)
-#     app.logger.warning(message)
-#     return (
-#         jsonify(
-#             status=status.HTTP_405_METHOD_NOT_ALLOWED,
-#             error="Method not Allowed",
-#             message=message,
-#         ),
-#         status.HTTP_405_METHOD_NOT_ALLOWED,
-#     )
+@app.errorhandler(status.HTTP_405_METHOD_NOT_ALLOWED)
+def method_not_supported(error):
+    """Handles unsuppoted HTTP methods with 405_METHOD_NOT_SUPPORTED"""
+    message = str(error)
+    app.logger.warning(message)
+    return (
+        jsonify(
+            status=status.HTTP_405_METHOD_NOT_ALLOWED,
+            error="Method not Allowed",
+            message=message,
+        ),
+        status.HTTP_405_METHOD_NOT_ALLOWED,
+    )
 
 
 @app.errorhandler(status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
