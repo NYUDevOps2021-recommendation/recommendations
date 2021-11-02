@@ -88,10 +88,23 @@ class Recommendations(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.product_origin = data["product_origin"]
-            self.product_target = data["product_target"]
             self.relation = data["relation"]
             self.is_deleted = 0
+
+            if isinstance(data["product_origin"], int):
+                self.product_origin = data["product_origin"]
+            else:
+                raise DataValidationError("Invalid type for int [product_origin]: " + type(data["product_origin"]))
+
+            if isinstance(data["product_target"], int):
+                self.product_target = data["product_target"]
+            else:
+                raise DataValidationError("Invalid type for int [product_target]: " + type(data["product_target"]))
+
+            if isinstance(data["relation"], int):
+                self.relation = data["relation"]
+            else:
+                raise DataValidationError("Invalid type for int [relation]: " + type(data["relation"]))
 
         except KeyError as error:
             raise DataValidationError(

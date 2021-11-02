@@ -83,7 +83,8 @@ class TestRecommendations(unittest.TestCase):
         # Change it an update it
         recommendation.relation = 2
         original_id = recommendation.id
-        recommendation.save()
+        payload = {'product_origin': 1, 'product_target': 2, 'relation': 2, 'is_deleted': 0}
+        recommendation.update(payload)
         self.assertEqual(recommendation.id, original_id)
         self.assertEqual(recommendation.relation, 2)
         # Fetch it back and make sure the id hasn't changed
@@ -145,7 +146,7 @@ class TestRecommendations(unittest.TestCase):
         self.assertIn("is_deleted", data)
         self.assertEqual(data["is_deleted"], recommendation.is_deleted)
 
-    def test_deserialize_a_pet(self):
+    def test_deserialize_a_recommendation(self):
         """ Test deserialization of a Recommendation """
         data = {
             "product_origin": 1,
