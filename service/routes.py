@@ -49,11 +49,8 @@ def read_recommendations():
     if len(recommendationList) != 0:
         for recommendation in recommendationList:
             if recommendation.is_deleted == 0:
-                recommendation.save()
                 temp.append(recommendation.serialize())
 
-    if len(recommendationList) == 0:
-        return make_response({}, status.HTTP_200_OK)
     return make_response(jsonify(temp), status.HTTP_200_OK)
 
 
