@@ -181,7 +181,7 @@ class TestYourResourceServer(TestCase):
         resp = self.app.get('/recommendations?product-id=2&relation=2')
         resp_data = resp.get_json()
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
-        self.assertEqual(resp_data, {})
+        self.assertEqual(resp_data, [])
 
 
     def test_not_find_a_reconmmendation(self):
