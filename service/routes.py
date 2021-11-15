@@ -147,7 +147,7 @@ def update_recommendations(id):
 
 
 ######################################################################
-# UPDATE A RECOMMENDATION
+# Increase the number of dislike
 ######################################################################
 @app.route("/recommendations/<int:id>/dislike", methods=["PUT"])
 def dislike_recommendations(id):
@@ -158,6 +158,16 @@ def dislike_recommendations(id):
     recommendation.save()
     message = recommendation.serialize()
     return make_response(jsonify(message), status.HTTP_200_OK)
+
+
+######################################################################
+# DELETE ALL RECOMMENDATION DATA
+######################################################################
+@app.route('/recommendations/reset', methods=['DELETE'])
+def reset_recommendations():
+    """ Removes all recommendations from the database """
+    Recommendations.remove_all()
+    return make_response('', status.HTTP_204_NO_CONTENT)
 
 
 ######################################################################

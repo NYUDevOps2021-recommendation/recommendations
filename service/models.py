@@ -172,3 +172,8 @@ class Recommendations(db.Model):
         logger.info("Processing lookup or 404 for id %s ...", by_id)
         return cls.query.get_or_404(by_id)
 
+    @classmethod
+    def remove_all(cls):
+        """ Removes all documents from the database """
+        cls.query.delete()
+        db.session.commit()
