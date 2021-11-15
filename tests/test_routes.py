@@ -247,6 +247,30 @@ class TestYourResourceServer(TestCase):
         resp = self.app.put('/recommendations/2', data=data_json, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
+    def test_dislike_recommendations(self):
+        """ Dislike the Recommendations"""
+        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'dislike': 0, 'relation': 1}
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location is not None)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        resp_data = json.loads(resp.data)
+        self.assertEqual(resp_data['product_origin'], 2)
+        self.assertEqual(resp_data['product_target'], 3)
+        self.assertEqual(resp_data['relation'], 1)
+        self.assertEqual(resp_data['dislike'], 0)
+        self.assertEqual(resp_data['is_deleted'], 0)
+
+        resp = self.app.put('/recommendations/1/dislike', data=data_json, content_type='application/json')
+        resp_data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_200_OK)
+        self.assertEqual(resp_data['dislike'], 1)
+
+        resp = self.app.put('/recommendations/2/dislike', data=data_json, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
+
+
     def test_reset_recommendations(self):
         """ Reset the Recommendations"""
         recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'dislike': 0, 'relation': 1}
