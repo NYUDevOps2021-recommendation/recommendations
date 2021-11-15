@@ -32,6 +32,7 @@ class Recommendations(db.Model):
     product_origin = db.Column(db.Integer, nullable=False)
     product_target = db.Column(db.Integer, nullable=False)
     relation = db.Column(db.Integer, nullable=False)  # 1 for cross-sell, 2 for up-sell, 3 for accessory
+    dislike = db.Column(db.Integer, nullable=False)   # the counter of the times customers click "dislike"
     is_deleted = db.Column(db.Integer, nullable=False, default = 0)  # 0 is not deleted, 1 is deleted
 
     def __repr__(self):
@@ -78,7 +79,7 @@ class Recommendations(db.Model):
     def serialize(self):
         """ Serializes a Recommendation into a dictionary """
         return {"id": self.id, "product_origin": self.product_origin, "product_target": self.product_target,
-                "relation": self.relation, "is_deleted": self.is_deleted}
+                "relation": self.relation, "dislike":self.dislike, "is_deleted": self.is_deleted}
 
     def deserialize(self, data):
         """
@@ -105,6 +106,11 @@ class Recommendations(db.Model):
                 self.relation = data["relation"]
             else:
                 raise DataValidationError("Invalid type for int [relation]: " + type(data["relation"]))
+
+            if isinstance(data["dislike"], int):
+                self.dislike = data["dislike"]
+            else:
+                raise DataValidationError("Invalid type for int [dislike]: " + type(data["dislike"]))
 
         except KeyError as error:
             raise DataValidationError(

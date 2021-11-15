@@ -122,7 +122,7 @@ def delete_recommendations(recommendation_id):
 
 
 ######################################################################
-# UPDATE A  RECOMMENDATION
+# UPDATE A RECOMMENDATION
 ######################################################################
 @app.route("/recommendations/<int:id>", methods=["PUT"])
 def update_recommendations(id):
@@ -137,13 +137,27 @@ def update_recommendations(id):
         payload = request.get_json()
         recommendation.update(payload)
         message = recommendation.serialize()
-        
+
         response_code = status.HTTP_200_OK
     else:
         message = 'Product with productId: {} - Not found'.format(id)
         response_code = status.HTTP_404_NOT_FOUND
 
     return make_response(jsonify(message), response_code)
+
+
+######################################################################
+# UPDATE A RECOMMENDATION
+######################################################################
+@app.route("/recommendations/<int:id>/dislike", methods=["PUT"])
+def dislike_recommendations(id):
+    recommendation = Recommendations.find_by_id(id)
+    if not recommendation:
+        raise NotFound("Recommendation with id '{}' was not found.".format(id))
+    recommendation.dislike += 1
+    recommendation.save()
+    message = recommendation.serialize()
+    return make_response(jsonify(message), status.HTTP_200_OK)
 
 
 ######################################################################
