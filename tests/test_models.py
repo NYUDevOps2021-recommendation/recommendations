@@ -13,6 +13,7 @@ DATABASE_URI = os.getenv(
     "DATABASE_URI", "postgres://postgres:postgres@localhost:5432/postgres"
 )
 
+
 ######################################################################
 #  <your resource name>   M O D E L   T E S T   C A S E S
 ######################################################################
@@ -64,7 +65,7 @@ class TestRecommendations(unittest.TestCase):
         """ Create a recommendation and add it to the database """
         recommendations = Recommendations.all()
         self.assertEqual(recommendations, [])
-        recommendation = Recommendations(product_origin=1, product_target=2, relation=1, is_deleted=0)
+        recommendation = Recommendations(product_origin=1, product_target=2, relation=1, dislike=0, is_deleted=0)
         self.assertTrue(recommendation != None)
         self.assertEqual(recommendation.id, None)
         recommendation.create()
@@ -75,7 +76,7 @@ class TestRecommendations(unittest.TestCase):
 
     def test_update_a_recommendation(self):
         """ Update a Recommendation """
-        recommendation = Recommendations(product_origin=1, product_target=2, relation=1, is_deleted=0)
+        recommendation = Recommendations(product_origin=1, product_target=2, relation=1, dislike=0, is_deleted=0)
         logging.debug(recommendation)
         recommendation.create()
         logging.debug(recommendation)
@@ -83,7 +84,7 @@ class TestRecommendations(unittest.TestCase):
         # Change it an update it
         recommendation.relation = 2
         original_id = recommendation.id
-        payload = {'product_origin': 1, 'product_target': 2, 'relation': 2, 'is_deleted': 0}
+        payload = {'product_origin': 1, 'product_target': 2, 'relation': 2, 'dislike': 0, 'is_deleted': 0}
         recommendation.update(payload)
         self.assertEqual(recommendation.id, original_id)
         self.assertEqual(recommendation.relation, 2)
@@ -96,11 +97,11 @@ class TestRecommendations(unittest.TestCase):
 
     def test_find_by_id(self):
         """ Find a Recommendation by ID """
-        recommendation1 = Recommendations(product_origin=1, product_target=2, relation=1, is_deleted=0)
+        recommendation1 = Recommendations(product_origin=1, product_target=2, relation=1, dislike=0, is_deleted=0)
         recommendation1.create()
-        recommendation2 = Recommendations(product_origin=1, product_target=3, relation=1, is_deleted=0)
+        recommendation2 = Recommendations(product_origin=1, product_target=3, relation=1, dislike=0, is_deleted=0)
         recommendation2.create()
-        recommendation3 = Recommendations(product_origin=1, product_target=4, relation=1, is_deleted=0)
+        recommendation3 = Recommendations(product_origin=1, product_target=4, relation=1, dislike=0, is_deleted=0)
         recommendation3.create()
         recommendations = [recommendation1, recommendation2, recommendation3]
         logging.debug(recommendations)
@@ -113,21 +114,23 @@ class TestRecommendations(unittest.TestCase):
         self.assertEqual(recommendation.product_origin, recommendations[1].product_origin)
         self.assertEqual(recommendation.product_target, recommendations[1].product_target)
         self.assertEqual(recommendation.relation, recommendations[1].relation)
+        self.assertEqual(recommendation.dislike, recommendations[1].dislike)
         self.assertEqual(recommendation.is_deleted, recommendations[1].is_deleted)
 
     def test_find_by_attribute(self):
         """ Find a Recommendation by Attributes """
-        recommendation1 = Recommendations(product_origin=1, product_target=2, relation=1, is_deleted=0)
+        recommendation1 = Recommendations(product_origin=1, product_target=2, relation=1, dislike=0, is_deleted=0)
         recommendation1.create()
-        recommendation2 = Recommendations(product_origin=1, product_target=3, relation=1, is_deleted=0)
+        recommendation2 = Recommendations(product_origin=1, product_target=3, relation=1, dislike=0, is_deleted=0)
         recommendation2.create()
-        recommendation3 = Recommendations(product_origin=1, product_target=4, relation=1, is_deleted=0)
+        recommendation3 = Recommendations(product_origin=1, product_target=4, relation=1, dislike=0, is_deleted=0)
         recommendation3.create()
         recommendations = Recommendations.find_by_attributes(origin=1, target=2, relation=1)
         self.assertEqual(len(recommendations), 1)
         self.assertEqual(recommendations[0].product_origin, recommendation1.product_origin)
         self.assertEqual(recommendations[0].product_target, recommendation1.product_target)
         self.assertEqual(recommendations[0].relation, recommendation1.relation)
+        self.assertEqual(recommendations[0].dislike, recommendation1.dislike)
         self.assertEqual(recommendations[0].is_deleted, recommendation1.is_deleted)
 
     def test_serialize_a_recommendation(self):
@@ -151,6 +154,7 @@ class TestRecommendations(unittest.TestCase):
         data = {
             "product_origin": 1,
             "product_target": 2,
+            "dislike": 0,
             "relation": 1,
         }
         recommendation = Recommendations()
@@ -160,6 +164,7 @@ class TestRecommendations(unittest.TestCase):
         self.assertEqual(recommendation.product_origin, 1)
         self.assertEqual(recommendation.product_target, 2)
         self.assertEqual(recommendation.relation, 1)
+        self.assertEqual(recommendation.dislike, 0)
         self.assertEqual(recommendation.is_deleted, 0)
 
     def test_deserialize_missing_data(self):
@@ -176,7 +181,7 @@ class TestRecommendations(unittest.TestCase):
 
     def test_find_or_404_found(self):
         """ Find or return 404 found """
-        test_recommendation = Recommendations(product_origin=1, product_target=2, relation=1, is_deleted=0)
+        test_recommendation = Recommendations(product_origin=1, product_target=2, relation=1, dislike=0, is_deleted=0)
         test_recommendation.create()
 
         recommendation = Recommendations.find_or_404(test_recommendation.id)
@@ -185,6 +190,7 @@ class TestRecommendations(unittest.TestCase):
         self.assertEqual(recommendation.product_origin, test_recommendation.product_origin)
         self.assertEqual(recommendation.product_target, test_recommendation.product_target)
         self.assertEqual(recommendation.relation, test_recommendation.relation)
+        self.assertEqual(recommendation.dislike, test_recommendation.dislike)
         self.assertEqual(recommendation.is_deleted, test_recommendation.is_deleted)
 
     def test_find_or_404_not_found(self):
