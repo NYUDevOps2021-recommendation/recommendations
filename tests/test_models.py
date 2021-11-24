@@ -9,10 +9,6 @@ from werkzeug.exceptions import NotFound
 from service.models import Recommendations, DataValidationError, db
 from service import app
 
-DATABASE_URI = os.getenv(
-    "DATABASE_URI", "postgres://postgres:postgres@localhost:5432/postgres"
-)
-
 
 ######################################################################
 #  <your resource name>   M O D E L   T E S T   C A S E S
@@ -25,7 +21,6 @@ class TestRecommendations(unittest.TestCase):
         """ This runs once before the entire test suite """
         app.config["TESTING"] = True
         app.config["DEBUG"] = False
-        app.config["SQLALCHEMY_DATABASE_URI"] = DATABASE_URI
         app.logger.setLevel(logging.CRITICAL)
         Recommendations.init_db(app)
 
