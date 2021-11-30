@@ -63,10 +63,3 @@ Feature: The recommendation store service back-end
     And I should see "Up-Sell" in the results
     And I should not see "Accessory" in the results
 
-  Scenario: Search all dogs
-    When I visit the "Home Page"
-    And I set the "Category" to "dog"
-    And I press the "Search" button
-    Then I should see "fido" in the results
-    And I should not see "kitty" in the results
-    And I should not see "leo" in the results
