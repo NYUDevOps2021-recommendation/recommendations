@@ -7,7 +7,7 @@ $(function () {
     // Updates the form with data from the response
     function update_form_data(res) {
         if (!res.is_deleted) {
-            $("#recommendation_id").val(res.id);
+            $("#id").val(res.id);
             $("#product_origin").val(res.product_origin);
             $("#product_target").val(res.product_target);
             $("#relation").val(res.relation);
@@ -17,10 +17,10 @@ $(function () {
 
     /// Clears all form fields
     function clear_form_data() {
-        $("#recommendation_id").val("");
+        $("#id").val("");
         $("#product_origin").val("");
         $("#product_target").val("");
-        $("#relation").val("0");
+        $("#relation").val("");
         $("#dislike").val("");
     }
 
@@ -71,7 +71,7 @@ $(function () {
 
     $("#update-btn").click(function () {
 
-        var recommendation_id = $("#recommendation_id").val();
+        var id = $("#id").val();
         var product_origin = $("#product_origin").val();
         var product_target = $("#product_target").val();
         var relation = $("#relation").val();
@@ -85,7 +85,7 @@ $(function () {
 
         var ajax = $.ajax({
             type: "PUT",
-            url: "/recommendations/" + recommendation_id,
+            url: "/recommendations/" + id,
             contentType: "application/json",
             data: JSON.stringify(data)
         })
@@ -107,11 +107,11 @@ $(function () {
 
     $("#retrieve-btn").click(function () {
 
-        var recommendation_id = $("#recommendation_id").val();
+        var id = $("#id").val();
 
         var ajax = $.ajax({
             type: "GET",
-            url: "/recommendations/" + recommendation_id,
+            url: "/recommendations/" + id,
             contentType: "application/json",
             data: ''
         })
@@ -136,11 +136,11 @@ $(function () {
 
     $("#delete-btn").click(function () {
 
-        var recommendation_id = $("#recommendation_id").val();
+        var id = $("#id").val();
 
         var ajax = $.ajax({
             type: "DELETE",
-            url: "/recommendations/" + recommendation_id,
+            url: "/recommendations/" + id,
             contentType: "application/json",
             data: '',
         })
@@ -161,11 +161,11 @@ $(function () {
 
     $("#dislike-btn").click(function () {
 
-        var recommendation_id = $("#recommendation_id").val();
+        var id = $("#id").val();
 
         var ajax = $.ajax({
             type: "PUT",
-            url: "/recommendations/" + recommendation_id + "/dislike",
+            url: "/recommendations/" + id + "/dislike",
             contentType: "application/json",
             data: '',
         })
@@ -184,7 +184,7 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#recommendation_id").val("");
+        $("#id").val("");
         clear_form_data()
     });
 
@@ -208,7 +208,7 @@ $(function () {
         if (product_origin) {
             queryString += 'product-id=' + product_origin
         }
-        if (relation != "0") {
+        if (relation) {
             if (queryString.length > 0) {
                 queryString += '&relation=' + relation
             } else {
@@ -232,9 +232,15 @@ $(function () {
             table += '<th class="col-md-4">Target Product</th>'
             table += '<th class="col-md-2">Relation</th>'
             table += '<th class="col-md-1">Dislike</th></tr></thead><tbody>'
+            var firstRecommendation = ""
             for (var i = 0; i < res.length; i++) {
                 var recommendation = res[i];
                 if (recommendation.is_deleted) continue
+
+                if (i == 0) {
+                    firstRecommendation = recommendation
+                }
+
                 if (recommendation.relation == "1")
                     recommendation.relation = "Cross-Sell"
                 else if (recommendation.relation == "2")
@@ -246,11 +252,22 @@ $(function () {
                     "</td><td style='padding-left: 15px; padding-right: 15px;'>" + recommendation.product_target +
                     "</td><td style='padding-left: 15px; padding-right: 15px;'>" + recommendation.relation +
                     "</td><td style='padding-left: 15px; padding-right: 15px;'>" + recommendation.dislike + "</td></tr>"
+                if (recommendation.relation == "Cross-Sell")
+                    recommendation.relation = "1"
+                else if (recommendation.relation == "Up-Sell")
+                    recommendation.relation = "2"
+                else if (recommendation.relation == "Accessory")
+                    recommendation.relation = "3"
             }
             table += '</tbody></table>'
             $("#search_results").append(table);
 
-            flash_message($("Success"))
+            // copy the first result to the form
+            if (firstRecommendation != "") {
+                update_form_data(firstRecommendation)
+            }
+
+            flash_message($("Search Success"))
         });
 
         ajax.fail(function (res) {

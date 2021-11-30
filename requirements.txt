@@ -10,6 +10,12 @@ psycopg2-binary==2.9.2
 gunicorn==20.1.0
 honcho==1.0.1
 
+# Behavior Driven Development
+behave==1.2.6
+selenium==3.141.0
+compare==0.2b0
+requests==2.25.1
+
 # Testing
 nose==1.3.7
 rednose==1.3.0
