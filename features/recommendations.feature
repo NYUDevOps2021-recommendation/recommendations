@@ -55,3 +55,18 @@ Feature: The recommendation store service back-end
     When I press the "Clear" button
     And I press the "Search" button
     Then I should not see "Cross-Sell" in the results
+
+  Scenario: List all Recommendations
+    When I visit the "Home Page"
+    And I press the "Search" button
+    Then I should see "Cross-Sell" in the results
+    And I should see "Up-Sell" in the results
+    And I should not see "Accessory" in the results
+
+  Scenario: Search all dogs
+    When I visit the "Home Page"
+    And I set the "Category" to "dog"
+    And I press the "Search" button
+    Then I should see "fido" in the results
+    And I should not see "kitty" in the results
+    And I should not see "leo" in the results

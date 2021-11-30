@@ -235,7 +235,6 @@ $(function () {
             var firstRecommendation = ""
             for (var i = 0; i < res.length; i++) {
                 var recommendation = res[i];
-                if (recommendation.is_deleted) continue
 
                 if (i == 0) {
                     firstRecommendation = recommendation
