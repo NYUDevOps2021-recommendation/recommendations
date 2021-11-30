@@ -162,6 +162,7 @@ class TestRecommendations(unittest.TestCase):
         self.assertEqual(recommendation.dislike, 0)
         self.assertEqual(recommendation.is_deleted, 0)
 
+
     def test_deserialize_missing_data(self):
         """ Test deserialization of a Recommendation with missing data """
         data = {"id": 1, "product_origin": 1, "product_target": 2}

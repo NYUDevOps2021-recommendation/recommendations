@@ -147,7 +147,7 @@ $(function () {
 
         ajax.done(function (res) {
             clear_form_data()
-            flash_message("Recommendation has been Deleted!")
+            flash_message("Delete Success")
         });
 
         ajax.fail(function (res) {
@@ -266,7 +266,7 @@ $(function () {
                 update_form_data(firstRecommendation)
             }
 
-            flash_message($("Search Success"))
+            flash_message("Search Success")
         });
 
         ajax.fail(function (res) {

@@ -114,6 +114,8 @@ class Recommendations(db.Model):
                     self.is_deleted = data["is_deleted"]
                 else:
                     raise DataValidationError("Invalid type for int [is_deleted]: " + type(data["is_deleted"]))
+            else:
+                self.is_deleted = 0
 
         except KeyError as error:
             raise DataValidationError(
