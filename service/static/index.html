@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Recommendation RESTful Service</title>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="static/css/blue_bootstrap.min.css">
+    <script type="text/javascript" src="static/js/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="static/js/rest_api.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="page-header">
+        <h1>Recommendation REST API Service</h1>
+    </div>
+
+    <!-- Flash Message -->
+    <div class="table-responsive">
+        <table class="table">
+            <tr>
+                <td>Status:</td>
+                <td><span id="flash_message"></span></td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="col-md-12" id="form_data">
+        Create, Retrieve, Update, and Delete a Recommendation:
+        <div class="well">
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="id">Recommendation ID:</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="id"
+                               placeholder="Enter ID of Recommendation">
+                    </div>
+                    <div class="col-sm-4">
+                        <button type="submit" class="btn btn-primary" id="retrieve-btn">Retrieve</button>
+                        <button type="submit" class="btn btn-danger" id="delete-btn">Delete</button>
+                        <button type="submit" class="btn btn-primary" id="dislike-btn">Dislike</button>
+                    </div>
+                </div>
+            </div> <!-- form div -->
+
+            <div class="form-horizontal">
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="product_origin">Origin Product:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="product_origin" placeholder="Enter ID for Origin Product">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="product_target">Target Product:</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="product_target"
+                               placeholder="Enter ID for Target Product">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-sm-2" for="relation">Relation:</label>
+                    <div class="col-sm-10">
+                        <select class="form-control" id="relation">
+                            <option value=""></option>
+                            <option value="1">Cross-Sell</option>
+                            <option value="2">Up-Sell</option>
+                            <option value="3">Accessory</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-primary" id="search-btn">Search</button>
+                        <button type="submit" class="btn btn-primary" id="clear-btn">Clear</button>
+                        <button type="submit" class="btn btn-success" id="create-btn">Create</button>
+                        <button type="submit" class="btn btn-warning" id="update-btn">Update</button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="submit" class="btn btn-danger" id="reset-btn">Reset</button>
+                    </div>
+                </div>
+            </div> <!-- form div -->
+        </div>
+
+        <!-- Search Results -->
+        <div class="table-responsive col-md-12" id="search_results">
+            <table class="table-striped">
+                <thead>
+                <tr>
+                    <th class="col-md-1">ID</th>
+                    <th class="col-md-4">Origin Product</th>
+                    <th class="col-md-4">Target Product</th>
+                    <th class="col-md-2">Relation</th>
+                    <th class="col-md-1">Dislike</th>
+                </tr>
+                </thead>
+            </table>
+        </div>
+
+        <footer>
+            <br><br>
+            <p>&copy; NYU DevOps Company 2017</p>
+        </footer>
+    </div><!--/span-->
+</div><!--/row-->
+
+</div><!-- container -->
+</body>
+</html>

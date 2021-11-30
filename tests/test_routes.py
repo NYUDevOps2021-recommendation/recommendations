@@ -79,6 +79,21 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['dislike'], 0)
         self.assertEqual(resp_data['is_deleted'], 0)
 
+        recommendation_rawdata = {'product_origin': 3, 'product_target': 4, 'dislike': 0, 'relation': 1, 'is_deleted': 1}
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
+
+        location = resp.headers.get('Location', None)
+        self.assertTrue(location is not None)
+
+        resp_data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
+        self.assertEqual(resp_data['product_origin'], 3)
+        self.assertEqual(resp_data['product_target'], 4)
+        self.assertEqual(resp_data['relation'], 1)
+        self.assertEqual(resp_data['dislike'], 0)
+        self.assertEqual(resp_data['is_deleted'], 1)
+
     def test_add_a_recommendation_includes_bad_data(self):
         """ Create a recommendation includes bad data """
         recommendation_rawdata = {'product_origin': "bad data", 'product_target': 3, 'relation': 1, 'dislike': 0}
@@ -103,6 +118,13 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
         recommendation_rawdata = {'product_origin': 1, 'product_target': 3, 'relation': 1, 'dislike': "bad data"}
+        data_json = json.dumps(recommendation_rawdata)
+        resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
+
+        resp_data = json.loads(resp.data)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
+
+        recommendation_rawdata = {'product_origin': 1, 'product_target': 3, 'relation': 1, 'dislike': 0, 'is_deleted': "bad data"}
         data_json = json.dumps(recommendation_rawdata)
         resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
 

@@ -33,7 +33,7 @@ class Recommendations(db.Model):
     product_target = db.Column(db.Integer, nullable=False)
     relation = db.Column(db.Integer, nullable=False)  # 1 for cross-sell, 2 for up-sell, 3 for accessory
     dislike = db.Column(db.Integer, nullable=False)   # the counter of the times customers click "dislike"
-    is_deleted = db.Column(db.Integer, nullable=False, default = 0)  # 0 is not deleted, 1 is deleted
+    is_deleted = db.Column(db.Integer, nullable=False, default=0)  # 0 is not deleted, 1 is deleted
 
     def __repr__(self):
         return "<Recommendations %s %s %s id=[%s]>" % (self.product_origin, self.product_target, self.relation, self.id)
@@ -89,9 +89,6 @@ class Recommendations(db.Model):
             data (dict): A dictionary containing the resource data
         """
         try:
-            self.relation = data["relation"]
-            self.is_deleted = 0
-
             if isinstance(data["product_origin"], int):
                 self.product_origin = data["product_origin"]
             else:
@@ -111,6 +108,14 @@ class Recommendations(db.Model):
                 self.dislike = data["dislike"]
             else:
                 raise DataValidationError("Invalid type for int [dislike]: " + type(data["dislike"]))
+
+            if "is_deleted" in data:
+                if isinstance(data["is_deleted"], int):
+                    self.is_deleted = data["is_deleted"]
+                else:
+                    raise DataValidationError("Invalid type for int [is_deleted]: " + type(data["is_deleted"]))
+            else:
+                self.is_deleted = 0
 
         except KeyError as error:
             raise DataValidationError(

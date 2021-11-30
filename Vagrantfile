@@ -17,7 +17,7 @@ Vagrant.configure(2) do |config|
 
   # Create a private network, which allows host-only access to the machine
   # using a specific IP.
-  config.vm.network "private_network", ip: "192.168.33.10"
+  config.vm.network "private_network", ip: "192.168.56.10"
 
   # Mac users can comment this next line out but
   # Windows users need to change the permission of files and directories
@@ -41,6 +41,7 @@ Vagrant.configure(2) do |config|
   ############################################################
   config.vm.provider :docker do |docker, override|
     override.vm.box = nil
+    # Chromium driver does not work with ubuntu so we use debian
     docker.image = "rofrano/vagrant-provider:ubuntu"
     docker.remains_running = true
     docker.has_ssh = true
@@ -79,8 +80,11 @@ Vagrant.configure(2) do |config|
     echo "****************************************"
     # Install Python 3 and dev tools 
     apt-get update
-    apt-get install -y git tree wget vim python3-dev python3-pip python3-venv
+    apt-get install -y git tree wget vim python3-dev python3-pip python3-venv python3-selenium
     apt-get -y autoremove
+
+    # Install Chromium Driver
+    apt-get install -y chromium-driver
     
     # Need PostgreSQL development library to compile on arm64
     apt-get install -y libpq-dev
