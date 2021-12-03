@@ -1,7 +1,7 @@
 # Recommendations
 CSCI-GA.2820-003 DevOps and Agile Methodologies Fall 2021
 
-![](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/workflow.yml/badge.svg)
+[![build](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/workflow.yml/badge.svg)](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/workflow.yml)
 
 # Recommendations Service
 
