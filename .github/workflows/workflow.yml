@@ -1,4 +1,4 @@
-name: Run Python Tests
+name: build
 on:
   push:
     branches:
@@ -40,7 +40,7 @@ jobs:
           python -m pip install --upgrade pip wheel
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
 
-      - name: Run unit tests with nose
+      - name: TDD
         run: nosetests
         env:
           DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
