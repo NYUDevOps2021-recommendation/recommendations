@@ -2,10 +2,10 @@ name: build
 on:
   push:
     branches:
-      - main
+      - codecov
   pull_request:
     branches:
-      - main
+      - codecov
 
 jobs:
   build:
