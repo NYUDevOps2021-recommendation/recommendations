@@ -45,5 +45,19 @@ jobs:
         env:
           DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
 
+      - name: BDD
+        run: |
+          apt-get install -y python3-selenium chromium-chromedriver
+          LATEST_CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
+          curl "https://chromedriver.storage.googleapis.com/${LATEST_CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O
+          unzip chromedriver_linux64.zip -d ~/bin
+          chromedriver --version
+          curl -X GET http://localhost:5984/
+          curl -X PUT http://admin:pass@localhost:5984/test
+          gunicorn --log-level=critical --bind=127.0.0.1:8080 service:app &
+          sleep 5
+          curl -I http://localhost:8080/
+          behave
+
       - name: Upload code coverage
         uses: codecov/codecov-action@v2
