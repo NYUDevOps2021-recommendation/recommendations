@@ -49,7 +49,7 @@ jobs:
         run: |
           LATEST_CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
           curl "https://chromedriver.storage.googleapis.com/${LATEST_CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O
-#          unzip chromedriver_linux64.zip -d ~/bin
+          unzip chromedriver_linux64.zip -d ~/bin
 #          chromedriver --version
 #          gunicorn --log-level=critical --bind=127.0.0.1:5000 service:app &
 #          sleep 5
