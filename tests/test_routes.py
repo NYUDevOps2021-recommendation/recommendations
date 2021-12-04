@@ -39,6 +39,7 @@ class TestYourResourceServer(TestCase):
     @classmethod
     def tearDownClass(cls):
         """ This runs once after the entire test suite """
+        db.session.close()
         pass
 
     def setUp(self):
