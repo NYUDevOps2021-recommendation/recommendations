@@ -184,8 +184,19 @@ $(function () {
     // ****************************************
 
     $("#clear-btn").click(function () {
-        $("#id").val("");
         clear_form_data()
+        $("#flash_message").empty();
+
+        $("#search_results").empty();
+        var table = '<table class="table-striped"><thead><tr>'
+        table += '<th class="col-md-1">ID</th>'
+        table += '<th class="col-md-4">Origin Product</th>'
+        table += '<th class="col-md-4">Target Product</th>'
+        table += '<th class="col-md-2">Relation</th>'
+        table += '<th class="col-md-1">Dislike</th></tr></thead></table>'
+        $("#search_results").append(table);
+
+
     });
 
     // ****************************************
