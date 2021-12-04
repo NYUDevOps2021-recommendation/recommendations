@@ -1,6 +1,6 @@
 # .coveragerc
 [run]
-source=service
+source=recommendations
 
 [report]
 show_missing = True
