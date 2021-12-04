@@ -47,7 +47,6 @@ jobs:
 
       - name: BDD
         run: |
-          apt-get install -y python3-selenium chromium-chromedriver
           LATEST_CHROMEDRIVER_VERSION=`curl -s "https://chromedriver.storage.googleapis.com/LATEST_RELEASE"`
           curl "https://chromedriver.storage.googleapis.com/${LATEST_CHROMEDRIVER_VERSION}/chromedriver_linux64.zip" -O
           unzip chromedriver_linux64.zip -d ~/bin
