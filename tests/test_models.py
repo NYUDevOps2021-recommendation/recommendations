@@ -29,6 +29,7 @@ class TestRecommendations(unittest.TestCase):
         """ This runs once after the entire test suite """
         db.drop_all()  # clean up the last tests
         db.create_all()  # make our sqlalchemy tables
+        db.session.close()
 
     def setUp(self):
         """ This runs before each test """
