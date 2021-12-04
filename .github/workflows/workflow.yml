@@ -46,4 +46,7 @@ jobs:
           DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
 
       - name: Upload code coverage
-        uses: codecov/codecov-action@v2 
+        uses: codecov/codecov-action@v2
+        with:
+          files: ${{runner.workspace}}/build/coverage.xml
+          fail_ci_if_error: true
