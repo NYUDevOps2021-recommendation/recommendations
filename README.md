@@ -1,7 +1,8 @@
 # Recommendations
 CSCI-GA.2820-003 DevOps and Agile Methodologies Fall 2021
 
-[![build](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/workflow.yml/badge.svg)](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/workflow.yml)
+[![BDD Tests](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/bdd-tests.yml/badge.svg)](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/bdd-tests.yml)
+[![TDD Tests](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/tdd-tests.yml/badge.svg)](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/tdd-tests.yml)
 [![codecov](https://codecov.io/gh/NYUDevOps2021-recommendation/recommendations/branch/main/graph/badge.svg?token=UWI2VFWQYH)](https://codecov.io/gh/NYUDevOps2021-recommendation/recommendations)
 
 # Recommendations Service
