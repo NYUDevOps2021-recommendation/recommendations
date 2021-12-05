@@ -1,0 +1,59 @@
+name: BDD Tests
+on:
+  push:
+    branches:
+      - CI_BDD
+  pull_request:
+    branches:
+      - CI_BDD
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    # use a known build environment
+    container: python:3.9
+
+    # Required services
+    services:
+      # Label used to access the service container
+      postgres:
+        image: postgres
+        env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: testdb
+        ports:
+          - 5432:5432
+        # Set health checks to wait until postgres has started
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    # Steps for the build
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+
+      - name: Install dependencies
+        run: |
+          apt-get update
+          apt-get install -y curl wget python3-selenium
+
+      - name: Install packages
+        run: |
+          python -m pip install --upgrade pip wheel
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Run the server locally
+        run: |
+          echo "\n*** STARTING APPLICATION ***\n"
+          gunicorn --log-level=critical --bind=0.0.0.0:8080 service:app &
+          sleep 5
+          curl -I http://localhost:8080/
+          echo "\n*** SERVER IS RUNNING ***"
+        env:
+          DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
+
+      - name: Run unit tests with behave
+        run: behave
