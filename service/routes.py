@@ -8,11 +8,9 @@ import os
 import sys
 import logging
 from flask import Flask, jsonify, request, url_for, make_response, abort, request
+from flask_restx import Api, Resource, fields, reqparse, inputs
 from . import status  # HTTP Status Codes
 from werkzeug.exceptions import NotFound
-
-# For this example we'll use SQLAlchemy, a popular ORM that supports a
-# variety of backends including SQLite, MySQL, and PostgreSQL
 from flask_sqlalchemy import SQLAlchemy
 from service.models import Recommendations, DataValidationError
 
@@ -34,7 +32,130 @@ def index():
 
 
 ######################################################################
-# Read a Recommendation based on product_origin and relation
+# Configure Swagger before initializing it
+######################################################################
+api = Api(app,
+          version='1.0.0',
+          title='Recommendation REST API Service',
+          description='This is a server of Recommendations.',
+          default='recommendations',
+          default_label='Recommendation operations',
+          doc='/apidocs',  # default also could use doc='/apidocs/'
+          )
+
+# Define the model so that the docs reflect what can be sent
+create_model = api.model('Recommendation', {
+    'product_origin': fields.Integer(required=True,
+                                     description='The ID of the Origin Product.'),
+    'product_target': fields.Integer(required=True,
+                                     description='The ID of the Target Product.'),
+    'relation': fields.Integer(required=True,
+                               description='The relation of Recommendation (1 for cross-sell, 2 for up-sell, 3 for accessory)'),
+    'dislike': fields.Integer(required=True,
+                              description='The counter of the times customers click "dislike"'),
+    'is_deleted': fields.Integer(required=True,
+                                 description='0 is not deleted, 1 is deleted'),
+})
+
+recommendation_model = api.inherit(
+    'RecommendationModel',
+    create_model,
+    {
+        'id': fields.Integer(readOnly=True,
+                             description='The unique id assigned internally by service'),
+    }
+)
+
+
+######################################################################
+# Special Error Handlers
+######################################################################
+@api.errorhandler(DataValidationError)
+def request_validation_error(error):
+    """ Handles Value Errors from bad data """
+    message = str(error)
+    app.logger.error(message)
+    return {
+               'status_code': status.HTTP_400_BAD_REQUEST,
+               'error': 'Bad Request',
+               'message': message
+           }, status.HTTP_400_BAD_REQUEST
+
+
+######################################################################
+#  PATH: /recommendations/{id}
+######################################################################
+@api.route('/recommendations/<recommendation_id>')
+@api.param('recommendation_id', 'The Recommendation identifier')
+class RecommendationResource(Resource):
+    """
+        RecommendationResource class
+
+        Allows the manipulation of a single Recommendation
+        GET /recommendation{id} - Returns a Recommendation with the id
+        PUT /recommendation{id} - Update a Recommendation with the id
+        DELETE /recommendation{id} -  Deletes a Recommendation with the id
+        """
+
+    # ------------------------------------------------------------------
+    # RETRIEVE A RECOMMENDATION
+    # ------------------------------------------------------------------
+    @api.doc('get_recommendations')
+    @api.response(404, 'Recommendation not found')
+    @api.marshal_with(recommendation_model)
+    def get(self, recommendation_id):
+        """
+        Retrieve a single Recommendation
+        This endpoint will return a Recommendation based on it's id
+        """
+        app.logger.info("Request for recommendation with id: %s", recommendation_id)
+        recommendation = Recommendations.find_by_id(recommendation_id)
+        if not recommendation:
+            abort(status.HTTP_404_NOT_FOUND, "Recommendation with id '{}' was not found.".format(recommendation_id))
+        return recommendation.serialize(), status.HTTP_200_OK
+
+
+######################################################################
+#  PATH: /recommendations
+######################################################################
+@api.route('/recommendations', strict_slashes=False)
+class RecommendationCollection(Resource):
+    """ Handles all interactions with collections of Recommendations """
+
+    # ------------------------------------------------------------------
+    # ADD A NEW RECOMMENDATION
+    # ------------------------------------------------------------------
+    @api.doc('create_recommendations')
+    @api.response(400, 'The posted data was not valid')
+    @api.expect(create_model)
+    @api.marshal_with(recommendation_model, code=201)
+    def post(self):
+        """
+        Creates a Recommendation
+        This endpoint will create a Recommendation based the data in the body that is posted
+        """
+
+        app.logger.info("Request to create a recommendation")
+        check_content_type("application/json")
+        recommendation = Recommendations()
+        recommendation.deserialize(api.payload)
+        recommendationList = Recommendations.find_by_attributes(recommendation.product_origin,
+                                                                recommendation.product_target,
+                                                                recommendation.relation)
+        if len(recommendationList) == 0:
+            recommendation.create()
+        else:
+            recommendation = recommendationList[0]
+            if recommendation.is_deleted == 1:
+                recommendation.is_deleted = 0
+                recommendation.save()
+        message = recommendation.serialize()
+        location_url = api.url_for(RecommendationResource, recommendation_id=recommendation.id, _external=True)
+        return recommendation.serialize(), status.HTTP_201_CREATED, {'Location': location_url}
+
+
+######################################################################
+# Query a Recommendation based on product_origin and relation
 ######################################################################
 @app.route("/recommendations", methods=["GET"])
 def read_recommendations():
@@ -55,51 +176,51 @@ def read_recommendations():
     return make_response(jsonify(temp), status.HTTP_200_OK)
 
 
-######################################################################
-# RETRIEVE A RECOMMENDATION
-######################################################################
-@app.route("/recommendations/<int:id>", methods=["GET"])
-def get_recommendations(id):
-    """
-    Retrieve a single Recommendation
-    This endpoint will return a Recommendation based on it's id
-    """
-    app.logger.info("Request for recommendation with id: %s", id)
-    recommendation = Recommendations.find_by_id(id)
-    if not recommendation:
-        raise NotFound("Recommendation with id '{}' was not found.".format(id))
-    return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
+# ######################################################################
+# # RETRIEVE A RECOMMENDATION
+# ######################################################################
+# @app.route("/recommendations/<int:id>", methods=["GET"])
+# def get_recommendations(id):
+#     """
+#     Retrieve a single Recommendation
+#     This endpoint will return a Recommendation based on it's id
+#     """
+#     app.logger.info("Request for recommendation with id: %s", id)
+#     recommendation = Recommendations.find_by_id(id)
+#     if not recommendation:
+#         raise NotFound("Recommendation with id '{}' was not found.".format(id))
+#     return make_response(jsonify(recommendation.serialize()), status.HTTP_200_OK)
 
 
-######################################################################
-# ADD A NEW RECOMMENDATION
-######################################################################
-@app.route("/recommendations", methods=["POST"])
-def create_recommendations():
-    """
-    Creates a recommendation
-    This endpoint will create a recommendation based the data in the body that is posted
-    """
-    app.logger.info("Request to create a recommendation")
-    check_content_type("application/json")
-    recommendation = Recommendations()
-    recommendation.deserialize(request.get_json())
-
-    recommendationList = Recommendations.find_by_attributes(recommendation.product_origin,
-                                                            recommendation.product_target,
-                                                            recommendation.relation)
-    if len(recommendationList) == 0:
-        recommendation.create()
-    else:
-        recommendation = recommendationList[0]
-        if recommendation.is_deleted == 1:
-            recommendation.is_deleted = 0
-            recommendation.save()
-    message = recommendation.serialize()
-    location_url = url_for("get_recommendations", id=recommendation.id, _external=True)
-    return make_response(
-        jsonify(message), status.HTTP_201_CREATED, {'Location': location_url}
-    )
+# ######################################################################
+# # ADD A NEW RECOMMENDATION
+# ######################################################################
+# @app.route("/recommendations", methods=["POST"])
+# def create_recommendations():
+#     """
+#     Creates a recommendation
+#     This endpoint will create a recommendation based the data in the body that is posted
+#     """
+#     app.logger.info("Request to create a recommendation")
+#     check_content_type("application/json")
+#     recommendation = Recommendations()
+#     recommendation.deserialize(request.get_json())
+#
+#     recommendationList = Recommendations.find_by_attributes(recommendation.product_origin,
+#                                                             recommendation.product_target,
+#                                                             recommendation.relation)
+#     if len(recommendationList) == 0:
+#         recommendation.create()
+#     else:
+#         recommendation = recommendationList[0]
+#         if recommendation.is_deleted == 1:
+#             recommendation.is_deleted = 0
+#             recommendation.save()
+#     message = recommendation.serialize()
+#     location_url = api.url_for(RecommendationResource, pet_id=recommendation.id, _external=True)
+#     return make_response(
+#         jsonify(message), status.HTTP_201_CREATED, {'Location': location_url}
+#     )
 
 
 ######################################################################
@@ -174,6 +295,11 @@ def reset_recommendations():
 ######################################################################
 #  U T I L I T Y   F U N C T I O N S
 ######################################################################
+def abort(error_code: int, message: str):
+    """Logs errors before aborting"""
+    app.logger.error(message)
+    api.abort(error_code, message)
+
 
 def init_db():
     """ Initialies the SQLAlchemy app """

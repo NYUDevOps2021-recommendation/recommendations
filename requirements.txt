@@ -5,6 +5,7 @@ SQLAlchemy==1.3.23
 # Runtime dependencies
 Flask==1.1.2
 Flask-SQLAlchemy==2.4.4
+Flask-RESTX==0.5.1
 python-dotenv==0.10.3
 psycopg2-binary==2.9.2
 gunicorn==20.1.0
