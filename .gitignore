@@ -63,6 +63,9 @@ coverage.xml
 *,cover
 .hypothesis/
 
+# Test reports
+unittests.xml
+
 # Translations
 *.mo
 *.pot
