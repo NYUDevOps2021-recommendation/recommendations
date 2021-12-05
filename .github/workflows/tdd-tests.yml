@@ -2,10 +2,10 @@ name: TDD Tests
 on:
   push:
     branches:
-      - CI_BDD
+      - main
   pull_request:
     branches:
-      - CI_BDD
+      - main
 
 jobs:
   build:
