@@ -48,14 +48,12 @@ jobs:
       - name: Run the server locally
         run: |
           echo "\n*** STARTING APPLICATION ***\n"
-          gunicorn --log-level=critical --bind=0.0.0.0:8080 service:app &
+          gunicorn --log-level=critical --bind=0.0.0.0:5000 service:app &
           sleep 5
-          curl -I http://localhost:8080/
+          curl -I http://localhost:5000/
           echo "\n*** SERVER IS RUNNING ***"
         env:
           DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
 
       - name: Run unit tests with behave
         run: behave
-        env:
-          DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
