@@ -57,3 +57,5 @@ jobs:
 
       - name: Run unit tests with behave
         run: behave
+        env:
+          DATABASE_URI: "postgres://postgres:postgres@postgres:5432/testdb"
