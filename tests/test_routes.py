@@ -21,8 +21,6 @@ PO = 3
 PT = 5
 RL = 1
 
-prefix = ''
-
 
 ######################################################################
 #  T E S T   C A S E S
@@ -187,7 +185,7 @@ class TestYourResourceServer(TestCase):
         resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
         location = resp.headers.get('Location', None)
         self.assertTrue(location is not None)
-        resp = self.app.get(prefix + '/recommendations/1')
+        resp = self.app.get('/recommendations/1')
         self.assertEqual(resp.status_code, status.HTTP_200_OK)
         self.assertTrue(resp is not None)
 
@@ -227,14 +225,10 @@ class TestYourResourceServer(TestCase):
     def test_not_find_a_reconmmendation(self):
         """ Not found a Recommendation """
         # not found
-        resp = self.app.get(prefix + '/recommendations/99')
+        resp = self.app.get('/recommendations/99')
         resp_data = json.loads(resp.data)
         self.assertTrue(resp is not None)
-
-        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'relation': 1}
-        data_json = json.dumps(recommendation_rawdata)
-        resp = self.app.post("/recommendations", data=data_json, content_type='application/txt')
-        self.assertEqual(resp.status_code, status.HTTP_415_UNSUPPORTED_MEDIA_TYPE)
+        self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_a_recommendation(self):
         """ Delete a Recommendation """
