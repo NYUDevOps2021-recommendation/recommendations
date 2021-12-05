@@ -15,7 +15,6 @@ db = SQLAlchemy()
 
 class DataValidationError(Exception):
     """ Used for an data validation errors when deserializing """
-
     pass
 
 
@@ -32,7 +31,7 @@ class Recommendations(db.Model):
     product_origin = db.Column(db.Integer, nullable=False)
     product_target = db.Column(db.Integer, nullable=False)
     relation = db.Column(db.Integer, nullable=False)  # 1 for cross-sell, 2 for up-sell, 3 for accessory
-    dislike = db.Column(db.Integer, nullable=False)   # the counter of the times customers click "dislike"
+    dislike = db.Column(db.Integer, nullable=False)  # the counter of the times customers click "dislike"
     is_deleted = db.Column(db.Integer, nullable=False, default=0)  # 0 is not deleted, 1 is deleted
 
     def __repr__(self):
@@ -46,7 +45,7 @@ class Recommendations(db.Model):
         self.id = None  # id must be none to generate next primary key
         db.session.add(self)
         db.session.commit()
-    
+
     def update(self, payload):
         """
         Update a Recommendation to the database
@@ -59,7 +58,7 @@ class Recommendations(db.Model):
         if "relation" in payload:
             self.relation = payload["relation"]
         if "is_deleted" in payload:
-            self.is_deleted = payload["is_deleted"] 
+            self.is_deleted = payload["is_deleted"]
         db.session.add(self)
         db.session.commit()
 
@@ -79,7 +78,7 @@ class Recommendations(db.Model):
     def serialize(self):
         """ Serializes a Recommendation into a dictionary """
         return {"id": self.id, "product_origin": self.product_origin, "product_target": self.product_target,
-                "relation": self.relation, "dislike":self.dislike, "is_deleted": self.is_deleted}
+                "relation": self.relation, "dislike": self.dislike, "is_deleted": self.is_deleted}
 
     def deserialize(self, data):
         """
@@ -161,7 +160,7 @@ class Recommendations(db.Model):
         if relation:
             result = result.filter(cls.relation == relation)
         return result.all()
-    
+
     # @classmethod
     # def find_by_attributes_for_delete(cls, product_id):
     #     """ Finds all YourResourceModels by product_id """

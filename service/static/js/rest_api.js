@@ -66,7 +66,7 @@ $(function () {
 
 
     // ****************************************
-    // Update a Pet
+    // Update a Recommendation
     // ****************************************
 
     $("#update-btn").click(function () {
@@ -230,7 +230,6 @@ $(function () {
         var ajax = $.ajax({
             type: "GET",
             url: "/recommendations?" + queryString,
-            contentType: "application/json",
             data: ''
         })
 

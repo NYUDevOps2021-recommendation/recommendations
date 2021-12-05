@@ -14,7 +14,7 @@ app = Flask(__name__)
 app.config.from_object("config")
 
 # Import the routes After the Flask app is created
-from service import routes, models, error_handlers
+from service import routes, models
 
 # Set up logging for production
 if __name__ != "__main__":
