@@ -1,4 +1,5 @@
 # Recommendations
+
 CSCI-GA.2820-003 DevOps and Agile Methodologies Fall 2021
 
 [![BDD Tests](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/bdd-tests.yml/badge.svg)](https://github.com/NYUDevOps2021-recommendation/recommendations/actions/workflows/bdd-tests.yml)
@@ -7,9 +8,9 @@ CSCI-GA.2820-003 DevOps and Agile Methodologies Fall 2021
 
 # Recommendations Service
 
-This repo contains details of our Recommendations Service.
-It could also recommend based on what other customers have purchased like "customers who bought item A 
-usually buy item B". Recommendations should have a recommendation type like cross-sell, up-sell, accessory, etc. This way a product page could request all of the up-sells for a product.
+This repo contains details of our Recommendations Service. It could also recommend based on what other customers have
+purchased like "customers who bought item A usually buy item B". Recommendations should have a recommendation type like
+cross-sell, up-sell, accessory, etc. This way a product page could request all of the up-sells for a product.
 
 ## Prerequisite Installation using Vagrant
 
@@ -18,7 +19,7 @@ Clone the project to your development folder and create your Vagrant VM
     $ git clone https://github.com/NYUDevOps2021-recommendation/recommendations.git
     $ cd recommendations
     $ vagrant up
-    
+
 Once the VM is up you can use it with:
 
     $ vagrant ssh
@@ -30,12 +31,28 @@ When you are done, you can use `Ctrl+C` to stop the server and then exit and shu
     $ exit
     $ vagrant halt
 
-
 ## Manually running the Tests
 
-Run the tests using `nosetests` and `coverage`
+### Test Driven Development (TDD)
 
-    $ nosetests
+This repo also has unit tests that you can run `nose`
+
+```sh
+nosetests
+```
+
+Nose is configured to automatically include the flags `--with-spec --spec-color` so that red-green-refactor is meaningful. If you are in a command shell that supports colors, passing tests will be green while failing tests will be red.
+
+### Behavior Driven Development (BDD)
+
+These tests require the service to be running becasue unlike the the TDD unit tests that test the code locally, these BDD intagration tests are using Selenium to manipulate a web page on a running server.
+
+Run the tests using `behave`
+
+```sh
+honcho start &
+behave
+```
 
 ## API Calls with specified inputs available within this service
 
@@ -44,7 +61,6 @@ Run the tests using `nosetests` and `coverage`
     POST /recommendations - Creates a recommendation in the datbase from the posted database
     PUT  /recommendations/{id} - Updates a recommendation in the database from the posted database
     DELETE /recommendations{id} - Removes a recommendation from the database that matches the id
-
 
 ## Valid content description of JSON file
 
