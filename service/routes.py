@@ -137,6 +137,9 @@ class RecommendationResource(Resource):
         app.logger.info('Request to Update a recommendation with id [%s]', recommendation_id)
         recommendation = Recommendations.find_by_id(recommendation_id)
         if recommendation:
+            recommendation.deserialize(api.payload)
+            if not recommendation.product_origin or not recommendation.product_target or not recommendation.relation:
+                abort(status.HTTP_400_BAD_REQUEST, 'The posted Recommendation data was not valid')
             recommendation.update(api.payload)
             return recommendation.serialize(), status.HTTP_200_OK
         else:
@@ -203,6 +206,8 @@ class RecommendationCollection(Resource):
         app.logger.info("Request to create a recommendation")
         recommendation = Recommendations()
         recommendation.deserialize(api.payload)
+        if not recommendation.product_origin or not recommendation.product_target or not recommendation.relation:
+            abort(status.HTTP_400_BAD_REQUEST, 'The posted Recommendation data was not valid')
         recommendationList = Recommendations.find_by_attributes(recommendation.product_origin,
                                                                 recommendation.product_target,
                                                                 recommendation.relation)

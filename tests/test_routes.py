@@ -65,7 +65,8 @@ class TestYourResourceServer(TestCase):
 
     def test_add_a_recommendation(self):
         """ Create a recommendation and add it to the database """
-        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'dislike': 0, 'relation': 1}
+        recommendation_rawdata = {'product_origin': 2, 'product_target': 3, 'dislike': 0, 'relation': 1,
+                                  'is_deleted': 0}
         data_json = json.dumps(recommendation_rawdata)
         resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
 
@@ -80,21 +81,12 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['dislike'], 0)
         self.assertEqual(resp_data['is_deleted'], 0)
 
-        recommendation_rawdata = {'product_origin': 3, 'product_target': 4, 'dislike': 0, 'relation': 1,
-                                  'is_deleted': 1}
+        # bad data
+        recommendation_rawdata = {'product_origin': 0, 'product_target': 4, 'dislike': 0, 'relation': 1,
+                                  'is_deleted': 0}
         data_json = json.dumps(recommendation_rawdata)
         resp = self.app.post("/recommendations", data=data_json, content_type='application/json')
-
-        location = resp.headers.get('Location', None)
-        self.assertTrue(location is not None)
-
-        resp_data = json.loads(resp.data)
-        self.assertEqual(resp.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(resp_data['product_origin'], 3)
-        self.assertEqual(resp_data['product_target'], 4)
-        self.assertEqual(resp_data['relation'], 1)
-        self.assertEqual(resp_data['dislike'], 0)
-        self.assertEqual(resp_data['is_deleted'], 1)
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
     def test_add_a_recommendation_includes_bad_data(self):
         """ Create a recommendation includes bad data """
@@ -264,6 +256,12 @@ class TestYourResourceServer(TestCase):
         self.assertEqual(resp_data['relation'], 1)
         self.assertEqual(resp_data['dislike'], 0)
         self.assertEqual(resp_data['is_deleted'], 0)
+
+        # bad data
+        new_date = {'product_origin': 0, 'product_target': 4, 'dislike': 0, 'relation': 1}
+        data_json = json.dumps(new_date)
+        resp = self.app.put('/recommendations/1', data=data_json, content_type='application/json')
+        self.assertEqual(resp.status_code, status.HTTP_400_BAD_REQUEST)
 
         resp = self.app.put('/recommendations/2', data=data_json, content_type='application/json')
         self.assertEqual(resp.status_code, status.HTTP_404_NOT_FOUND)

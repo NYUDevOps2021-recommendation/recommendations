@@ -40,6 +40,19 @@ $(function () {
         var product_target = $("#product_target").val();
         var relation = $("#relation").val();
 
+        if (!product_origin) {
+            flash_message("Origin Product cannot be empty when creating a new recommendation")
+            return
+        }
+        if (!product_target) {
+            flash_message("Target Product cannot be empty when creating a new recommendation")
+            return
+        }
+        if (!relation) {
+            flash_message("Relation cannot be empty when creating a new recommendation")
+            return
+        }
+
         var data = {
             "product_origin": Number(product_origin),
             "product_target": Number(product_target),
@@ -75,6 +88,19 @@ $(function () {
         var product_origin = $("#product_origin").val();
         var product_target = $("#product_target").val();
         var relation = $("#relation").val();
+
+        if (!product_origin) {
+            flash_message("Origin Product cannot be empty when updating a recommendation")
+            return
+        }
+        if (!product_target) {
+            flash_message("Target Product cannot be empty when updating a recommendation")
+            return
+        }
+        if (!relation) {
+            flash_message("Relation cannot be empty when updating a recommendation")
+            return
+        }
 
         var data = {
             "product_origin": Number(product_origin),
